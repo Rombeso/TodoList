@@ -1,5 +1,6 @@
-import React, {ChangeEvent, useState, KeyboardEvent} from 'react';
+import React, {ChangeEvent} from 'react';
 import {FilterValuesType} from './App';
+import {AddItemForm} from "./AddItemForm";
 
 export type TaskType = {
     id: string
@@ -26,11 +27,14 @@ export function Todolist(props: PropsType) {
     const onActiveClickHandler = () => props.changeFilter("active", props.id);
     const onCompletedClickHandler = () => props.changeFilter("completed", props.id);
 
+    const addTask = (title: string) => {
+        props.addTask(title, props.id)
+    }
     return <div>
         <h3> {props.title}
             <button onClick={removeTodolist}>x</button>
         </h3>
-<AddItemForm id={props.id} addTask={props.addTask}/>
+        <AddItemForm addItem={addTask}/>
 
         <ul>
             {
@@ -61,46 +65,5 @@ export function Todolist(props: PropsType) {
             </button>
         </div>
     </div>
-}
-
-type AddItemFormPropsType = {
-    id: string
-    addTask: (title: string, todolistId: string) => void
-}
-
-const AddItemForm = (props: AddItemFormPropsType) => {
-    let [title, setTitle] = useState("")
-    let [error, setError] = useState<string | null>(null)
-    const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-        setTitle(e.currentTarget.value)
-    }
-
-    const onKeyPressHandler = (e: KeyboardEvent<HTMLInputElement>) => {
-        setError(null);
-        if (e.charCode === 13) {
-            addTask();
-        }
-    }
-    const addTask = () => {
-        let newTitle = title.trim();
-        if (newTitle !== "") {
-            props.addTask(newTitle, props.id);
-            setTitle("");
-        } else {
-            setError("Title is required");
-        }
-    }
-
-    return (
-        <div>
-            <input value={title}
-                   onChange={onChangeHandler}
-                   onKeyPress={onKeyPressHandler}
-                   className={error ? "error" : ""}
-            />
-            <button onClick={addTask}>+</button>
-            {error && <div className="error-message">{error}</div>}
-        </div>
-    )
 }
 
