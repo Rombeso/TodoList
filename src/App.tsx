@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import './App.css';
 import {TaskType, Todolist} from './Todolist';
 import {v1} from 'uuid';
+import Input from "./Components/Input";
 
 export type FilterValuesType = "all" | "active" | "completed";
 type TodolistType = {
@@ -34,7 +35,6 @@ function App() {
             {id: v1(), title: "React Book", isDone: true}
         ]
     });
-
 
     function removeTask(id: string, todolistId: string) {
         //достанем нужный массив по todolistId:
@@ -85,8 +85,28 @@ function App() {
         setTasks({...tasks});
     }
 
+    const addTodoList = (newTask: string) => {
+        let idTodoList = v1();
+        let todoList: TodolistType = {
+            id: idTodoList,
+            title: newTask,
+            filter: "all"
+        }
+        setTodolists([todoList, ...todolists])
+        setTasks({...tasks, [idTodoList]:[]})
+    }
+
+    const updateTaskTitle = (todolistId: string, id: string, newTitle: string) => {
+        setTasks({...tasks, [todolistId]:tasks[todolistId].map(m=> m.id === id ? {...m, title: newTitle }: m) })
+    }
+
+    const updateTodoListTitle = (todolistId: string, newTitle: string) => {
+      setTodolists(todolists.map(m=> m.id === todolistId ? {...m, title: newTitle} : m))
+    }
+
     return (
         <div className="App">
+            <Input callBack={addTodoList}/>
             {
                 todolists.map(tl => {
                     let allTodolistTasks = tasks[tl.id];
@@ -110,6 +130,8 @@ function App() {
                         changeTaskStatus={changeStatus}
                         filter={tl.filter}
                         removeTodolist={removeTodolist}
+                        updateTaskTitle={updateTaskTitle}
+                        updateTodoListTitle={updateTodoListTitle}
                     />
                 })
             }
