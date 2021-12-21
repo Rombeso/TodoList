@@ -1,13 +1,15 @@
-import React, {useState} from 'react';
+import React, {useReducer, useState} from 'react';
 import './App.css';
 import {Todolist} from './Todolist';
 import { v1 } from 'uuid';
+import {addTaskAC, removeTaskAC, TaskReducer} from "./reducers/TasksReducer";
+import {changeFilterAC, FilterReducer} from "./reducers/FilterReducer";
 
 export type FilterValuesType = "all" | "active" | "completed";
 
 function App() {
 
-    let [tasks, setTasks] = useState([
+    let [tasks, taskDispatch] = useReducer(TaskReducer,[
         { id: v1(), title: "HTML&CSS", isDone: true },
         { id: v1(), title: "JS", isDone: true },
         { id: v1(), title: "ReactJS", isDone: false },
@@ -16,17 +18,19 @@ function App() {
     ]);
 
     function removeTask(id: string) {
-        let filteredTasks = tasks.filter(t => t.id != id);
-        setTasks(filteredTasks);
+        // let filteredTasks = tasks.filter(t => t.id != id);
+        // setTasks(filteredTasks);
+        taskDispatch(removeTaskAC(id))
     }
 
     function addTask(title: string) {
-        let task = { id: v1(), title: title, isDone: false };
-        let newTasks = [task, ...tasks];
-        setTasks(newTasks);
+        // let task = { id: v1(), title: title, isDone: false };
+        // let newTasks = [task, ...tasks];
+        // setTasks(newTasks);
+        taskDispatch(addTaskAC(title))
     }
 
-    let [filter, setFilter] = useState<FilterValuesType>("all");
+    let [filter, filterDispatch] = useReducer(FilterReducer, "all");
 
     let tasksForTodolist = tasks;
 
@@ -38,10 +42,8 @@ function App() {
     }
 
     function changeFilter(value: FilterValuesType) {
-        setFilter(value);
+        filterDispatch(changeFilterAC(value));
     }
-
-
 
     return (
         <div className="App">
