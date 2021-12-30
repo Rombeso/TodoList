@@ -1,7 +1,5 @@
 import {getBanknoteList, getSum, getTriangleType, isEvenIndexSumGreater, getSquarePositiveIntegers, sum, sumFirstNumbers} from "./lesson_8";
 
-
-
 test("sum", () => {
     expect(sum(3, 5, 7, 6, 4, 9)).toBe(34)
     expect(sum(1, 1, 1, 6)).toBe(9)

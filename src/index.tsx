@@ -3,6 +3,9 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import {getBanknoteList, getSum, getTriangleType, isEvenIndexSumGreater, getSquarePositiveIntegers, sum, sumFirstNumbers} from "./lesson_8";
+// sum(3, 5, 7, 6, 4, 9);
+console.log(sumFirstNumbers(5));
 
 ReactDOM.render(<App />,  document.getElementById('root'));
 
