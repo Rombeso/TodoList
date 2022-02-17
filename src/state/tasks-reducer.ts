@@ -110,7 +110,7 @@ export const tasksReducer = (state: TasksStateType = initialState, action: Actio
         case 'ADD-TODOLIST': {
             return {
                 ...state,
-                [action.todolistId]: []
+                [action.todoList.id]: []
             }
         }
         case 'REMOVE-TODOLIST': {
@@ -185,7 +185,6 @@ export const addTasksTC = (title: string, todolistId: string) => {
 
 export const updateTaskStatusTC = (todoId: string, taskId: string, status: TaskStatuses) =>
     (dispatch: Dispatch, getState: () => AppRootStateType) => {
-        debugger
         const appState = getState()
         const tasksApp = appState.tasks
         const tasksForCurrentTodo = tasksApp[todoId]
@@ -206,6 +205,33 @@ export const updateTaskStatusTC = (todoId: string, taskId: string, status: TaskS
             todolistsAPI.updateTask(todoId, taskId, model)
                 .then((res) => {
                     dispatch(changeTaskStatusAC(taskId, status, todoId))
+                })
+        }
+
+    }
+
+export const changeTaskTitleTC = (taskId: string, newTitle: string, todolistId: string) =>
+    (dispatch: Dispatch, getState: () => AppRootStateType) => {
+        const appState = getState()
+        const tasksApp = appState.tasks
+        const tasksForCurrentTodo = tasksApp[todolistId]
+        const currentTask =  tasksForCurrentTodo.find((t)=> {
+            return t.id === taskId
+        })
+
+        if(currentTask){
+            const model: UpdateTaskModelType = {
+                title: newTitle,
+                status: currentTask.status,
+                deadline: currentTask.deadline,
+                description: currentTask.description,
+                priority: currentTask.priority,
+                startDate: currentTask.startDate,
+            }
+
+            todolistsAPI.updateTask(todolistId, taskId, model)
+                .then((res) => {
+                    dispatch(changeTaskTitleAC(taskId, newTitle, todolistId))
                 })
         }
 
