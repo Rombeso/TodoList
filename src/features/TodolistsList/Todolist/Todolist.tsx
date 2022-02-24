@@ -6,7 +6,7 @@ import Button from '@mui/material/Button';
 import {Delete} from '@mui/icons-material';
 import {Task} from './Task/Task'
 import {TaskStatuses, TaskType} from '../../../api/todolists-api'
-import {FilterValuesType} from './todolists-reducer'
+import {FilterValuesType, TodolistDomainType} from './todolists-reducer'
 import {useDispatch} from "react-redux";
 import {fetchTasksTC} from "./tasks-reducer";
 import {RequestStatusType} from "../../../app/app-reducer";
@@ -60,7 +60,10 @@ export const Todolist = React.memo(function (props: PropsType) {
         tasksForTodolist = props.tasks.filter(t => t.status === TaskStatuses.Completed)
     }
     return <div>
-        <h3><EditableSpan value={props.title} onChange={changeTodolistTitle}/>
+        <h3><EditableSpan value={props.title}
+                          onChange={changeTodolistTitle}
+                          disabled={props.entityStatus === 'loading'}
+        />
             <IconButton
                 onClick={removeTodolist}
                 disabled={props.entityStatus === 'loading'}>
@@ -74,6 +77,7 @@ export const Todolist = React.memo(function (props: PropsType) {
                                                 removeTask={props.removeTask}
                                                 changeTaskTitle={props.changeTaskTitle}
                                                 changeTaskStatus={props.changeTaskStatus}
+                                                entityStatus={t.entityStatus}
                 />)
             }
         </div>
