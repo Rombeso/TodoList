@@ -10,6 +10,8 @@ import {
 import {AxiosError} from "axios";
 import {handleServerAppError, handleServerNetworkError} from "../../../utils/error-utils";
 import {Simulate} from "react-dom/test-utils";
+import {fetchTasksTC} from "./tasks-reducer";
+import {ThunkAction} from "redux-thunk";
 // import error = Simulate.error;
 
 const initialState: Array<TodolistDomainType> = []
@@ -28,6 +30,9 @@ export const todolistsReducer = (state: Array<TodolistDomainType> = initialState
             return action.todolists.map(tl => ({...tl, filter: 'all', entityStatus: "idle"}))
         case "CHANGE-TODOLIST-ENTITY-STATUS": {
             return state.map(tl => tl.id === action.id ? {...tl, entityStatus: action.entityStatus} : tl)
+        }
+        case "CLEAR-DATA": {
+            return  []
         }
         default:
             return state
@@ -54,14 +59,27 @@ export const changeTodolistEntityStatusAC = (id: string, entityStatus: RequestSt
     entityStatus
 } as const)
 
+export const clearTodosDataAC = () => ({
+    type: 'CLEAR-DATA'
+} as const )
+
 // thunks
-export const fetchTodolistsTC = () => {
-    return (dispatch: Dispatch<ActionsType>) => {
+
+type ThunkType = ThunkAction<void, Array<TodolistDomainType>, unknown, ActionsType>
+
+export const fetchTodolistsTC = ():ThunkType => {
+    return (dispatch) => {
         dispatch(setAppStatusAC("loading"))
         todolistsAPI.getTodolists()
             .then((res) => {
                     dispatch(setAppStatusAC("succeeded"))
                     dispatch(setTodolistsAC(res.data))
+                return res.data
+            })
+            .then((todos)=> {
+                todos.forEach((tl)=> {
+                    dispatch(fetchTasksTC(tl.id))
+                })
             })
             .catch((err: AxiosError) => {
                 handleServerNetworkError(dispatch, err.message)
@@ -96,17 +114,10 @@ export const addTodolistTC = (title: string) => {
                     dispatch(addTodolistAC(res.data.data.item))
                 } else {
                     handleServerAppError<{ item: TodolistType }>(dispatch, res.data)
-                    // dispatch(setAppStatusAC('failed'))
-                    // if (res.data.messages.length) {
-                    //     dispatch(setAppErrorAC(res.data.messages[0]))
-                    // } else {
-                    //     dispatch(setAppErrorAC('Some error occurred'))
-                    // }
                 }
             })
             .catch((err: AxiosError) => {
                 handleServerNetworkError(dispatch, err.message)
-                // dispatch(setAppErrorAC(err.message))
             })
     }
 }
@@ -135,6 +146,7 @@ export type AddTodolistActionType = ReturnType<typeof addTodolistAC>;
 export type RemoveTodolistActionType = ReturnType<typeof removeTodolistAC>;
 export type SetTodolistsActionType = ReturnType<typeof setTodolistsAC>;
 export type ChangeTodolistEntityStatusActionType = ReturnType<typeof changeTodolistEntityStatusAC>;
+export type ClearTodosDataActionType = ReturnType<typeof clearTodosDataAC>;
 type ActionsType =
     | RemoveTodolistActionType
     | AddTodolistActionType
@@ -144,6 +156,7 @@ type ActionsType =
 | SetAppStatusType
 | SetAppErrorType
 | ChangeTodolistEntityStatusActionType
+| ClearTodosDataActionType
 export type FilterValuesType = 'all' | 'active' | 'completed';
 export type TodolistDomainType = TodolistType & {
     filter: FilterValuesType

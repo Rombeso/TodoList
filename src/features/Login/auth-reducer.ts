@@ -4,6 +4,7 @@ import {authAPI, loginParamsType, TaskType, todolistsAPI} from "../../api/todoli
 import {handleServerAppError, handleServerNetworkError} from "../../utils/error-utils";
 import {AxiosError} from "axios";
 import {addTaskAC} from "../TodolistsList/Todolist/tasks-reducer";
+import {clearTodosDataAC, ClearTodosDataActionType} from "../TodolistsList/Todolist/todolists-reducer";
 
 const initialState = {
     isLoggedIn: false
@@ -48,6 +49,7 @@ export const logoutTC = () => (dispatch: Dispatch<ActionsType>) => {
             if (res.data.resultCode === 0) {
                 dispatch(setAppStatusAC('succeeded'))
                 dispatch(setIsLoggedInAC(false))
+                dispatch(clearTodosDataAC())
             } else {
                 handleServerAppError(dispatch, res.data)
 
@@ -63,4 +65,5 @@ export const logoutTC = () => (dispatch: Dispatch<ActionsType>) => {
 type ActionsType = ReturnType<typeof setIsLoggedInAC>
     | SetAppStatusType
     | SetAppErrorType
+    | ClearTodosDataActionType
 
