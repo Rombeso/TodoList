@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useCallback, useEffect} from 'react'
 import './App.css';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -10,9 +10,14 @@ import {Menu} from '@mui/icons-material';
 import {TaskType} from '../api/todolists-api'
 import {TodolistsList} from "../features/TodolistsList/TodolistsList";
 import LinearProgress from '@mui/material/LinearProgress';
-import {useAppSelector} from "./store";
-import {RequestStatusType} from "./app-reducer";
+import {AppRootStateType, useAppSelector} from "./store";
+import {initializeAppTC, RequestStatusType} from "./app-reducer";
 import {ErrorSnackbar} from "../components/ErrorSnackbar/ErrorSnackbar";
+import {Navigate, Route, Routes} from "react-router-dom";
+import {Login} from "../features/Login/Login";
+import {useDispatch, useSelector} from "react-redux";
+import {CircularProgress} from "@mui/material";
+import {logoutTC} from "../features/Login/auth-reducer";
 
 
 export type TasksStateType = {
@@ -20,13 +25,36 @@ export type TasksStateType = {
 }
 
 
+class initialState {
+}
+
 function App() {
 
-    // const status = useSelector<AppRootStateType, RequestStatusType>((state)=> state.app.status)
     const status = useAppSelector<RequestStatusType>((state) => state.app.status)
+    const isInitilized = useAppSelector<initialState>((state) => state.app.isInitialized)
+    const isLoggedIn = useSelector<AppRootStateType, boolean>(state => state.auth.isLoggedIn)
 
+    const dispatch = useDispatch()
+    useEffect(() => {
+        dispatch(initializeAppTC())
+    }, [])
+
+if(!isInitilized){
+    return <div
+        style={{position: 'fixed', top: '30%', textAlign: 'center', width: '100%'}}>
+        <CircularProgress/>
+    </div>
+}
+
+    const logoutHandler = () => {
+        dispatch(logoutTC())
+    }
+    // const logoutHandler = useCallback(() => {
+    //     dispatch(logoutTC())
+    // }, [dispatch])
 
     return (
+
         <div className="App">
             <AppBar position="static">
                 <Toolbar>
@@ -36,12 +64,20 @@ function App() {
                     <Typography variant="h6">
                         News
                     </Typography>
-                    <Button color="inherit">Login</Button>
+
+                    {isInitilized && <Button color="inherit" onClick={logoutHandler}>Logout</Button>}
+
                 </Toolbar>
             </AppBar>
             {status === "loading" && <LinearProgress color="secondary"/>}
             <Container fixed>
-                <TodolistsList/>
+                <Routes>
+                    <Route path={'/'} element={<TodolistsList/>}/>
+                    <Route path={'/Login'} element={<Login/>}/>
+
+                    <Route path={'/404'} element={<h1>404: PAGE NOT FOUND</h1>}/>
+                    <Route path={'*'} element={<Navigate to='/404'/>}/>
+                </Routes>
             </Container>
             <ErrorSnackbar/>
         </div>
