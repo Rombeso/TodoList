@@ -5,15 +5,15 @@ import {Dispatch} from "redux";
 type ActionErrorType = SetAppStatusType | SetAppErrorType
 
 export const handleServerNetworkError = (dispatch: Dispatch<ActionErrorType>, message: string) => {
-    dispatch(setAppErrorAC(message))
-    dispatch(setAppStatusAC('failed'))
+    dispatch(setAppErrorAC({error:message}))
+    dispatch(setAppStatusAC({status:'failed'}))
 }
 
 export const handleServerAppError = <T>(dispatch: Dispatch<ActionErrorType>, data: ResponseType<T>) => {
-    dispatch(setAppStatusAC('failed'))
+    dispatch(setAppStatusAC({status:'failed'}))
     if (data.messages.length) {
-        dispatch(setAppErrorAC(data.messages[0]))
+        dispatch(setAppErrorAC({error:data.messages[0]}))
     } else {
-        dispatch(setAppErrorAC('Some error occurred'))
+        dispatch(setAppErrorAC({error:'Some error occurred'}))
     }
 }
