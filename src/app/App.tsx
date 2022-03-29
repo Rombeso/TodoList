@@ -39,12 +39,12 @@ function App() {
         dispatch(initializeAppTC())
     }, [])
 
-if(!isInitilized){
-    return <div
-        style={{position: 'fixed', top: '30%', textAlign: 'center', width: '100%'}}>
-        <CircularProgress/>
-    </div>
-}
+    if (!isInitilized) {
+        return <div
+            style={{position: 'fixed', top: '30%', textAlign: 'center', width: '100%'}}>
+            <CircularProgress/>
+        </div>
+    }
 
     const logoutHandler = () => {
         dispatch(logoutTC())

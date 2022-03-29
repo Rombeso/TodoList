@@ -56,7 +56,7 @@ const slice = createSlice({
             delete state[action.payload.id]
         })
         builder.addCase(setTodolistsAC, (state, action) => {
-            action.payload.todolists.forEach((tl:any) => {
+            action.payload.todolists.forEach((tl: any) => {
                 state[tl.id] = []
             })
         })
@@ -217,10 +217,10 @@ export const updateTaskTC = (taskId: string, domainModel: UpdateDomainTaskModelT
             ...domainModel
         }
         dispatch(setAppStatusAC({status: 'loading'}))
-        dispatch(changeTaskEntityStatusAC({taskId,entityStatus: "loading", todolistId}))
+        dispatch(changeTaskEntityStatusAC({taskId, entityStatus: "loading", todolistId}))
         todolistsAPI.updateTask(todolistId, taskId, apiModel)
             .then(res => {
-                dispatch(changeTaskEntityStatusAC({taskId, entityStatus:"succeeded", todolistId}))
+                dispatch(changeTaskEntityStatusAC({taskId, entityStatus: "succeeded", todolistId}))
                 if (res.data.resultCode === ResponseStatusCode.success) {
                     dispatch(setAppStatusAC({status: 'succeeded'}))
                     // const action = updateTaskAC(taskId, domainModel, todolistId)
