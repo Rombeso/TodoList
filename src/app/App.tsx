@@ -16,8 +16,9 @@ import {ErrorSnackbar} from "../components/ErrorSnackbar/ErrorSnackbar";
 import {Navigate, Route, Routes} from "react-router-dom";
 import {Login} from "../features/Login/Login";
 import {useDispatch, useSelector} from "react-redux";
-import {CircularProgress} from "@mui/material";
+import {CircularProgress, createTheme} from "@mui/material";
 import {logoutTC} from "../features/Login/auth-reducer";
+import {purple} from "@mui/material/colors";
 
 
 export type TasksStateType = {
@@ -27,6 +28,19 @@ export type TasksStateType = {
 
 class initialState {
 }
+
+const theme = createTheme({
+    palette: {
+        primary: {
+            // Purple and green play nicely together.
+            main: purple[500],
+        },
+        secondary: {
+            // This is green.A700 as hex.
+            main: '#11cb5f',
+        },
+    },
+});
 
 function App() {
 
@@ -49,23 +63,18 @@ function App() {
     const logoutHandler = () => {
         dispatch(logoutTC())
     }
-    // const logoutHandler = useCallback(() => {
-    //     dispatch(logoutTC())
-    // }, [dispatch])
 
     return (
 
         <div className="App">
-            <AppBar position="static">
-                <Toolbar>
-                    <IconButton edge="start" color="inherit" aria-label="menu">
-                        <Menu/>
-                    </IconButton>
-                    <Typography variant="h6">
-                        News
+            <AppBar position="static" color="secondary">
+                <Toolbar >
+                    <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                        Organize it all
+                        with Todo List
                     </Typography>
 
-                    {isInitilized && <Button color="inherit" onClick={logoutHandler}>Logout</Button>}
+                    {isLoggedIn && <Button color="inherit" variant="outlined" onClick={logoutHandler}>Logout</Button>}
 
                 </Toolbar>
             </AppBar>
