@@ -13,11 +13,6 @@ import {loginTC} from "./auth-reducer";
 import {AppRootStateType} from "../../app/store";
 import {Navigate} from "react-router-dom";
 import {loginParamsType} from "../../api/todolists-api";
-// type FormikErrorType = {
-//     email?: string
-//     password?: string
-//     rememberMe?: boolean
-// }
 
 export const Login = () => {
     const dispatch = useDispatch()
@@ -64,8 +59,8 @@ export const Login = () => {
                             </a>
                         </p>
                         <p>or use common test account credentials:</p>
-                        <p>Email: free@samuraijs.com</p>
-                        <p>Password: free</p>
+                        <p>Email: larionovra@gmail.com</p>
+                        <p>Password: qwerty1234</p>
                     </FormLabel>
                     <form onSubmit={formik.handleSubmit}>
                     <FormGroup>
